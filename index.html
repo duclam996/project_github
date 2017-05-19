@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>product</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <script src="js/jquery-3.2.0.min.js" type="text/javascript"></script>
+        <script src="js/bootstrap.js" type="text/javascript"></script>
+        <script src="js/angular.min.js" type="text/javascript"></script>
+    </head>
+    <body  ng-app="myApp" ng-controller="CR">
+        <div class="container">
+            <div class="row">
+                <label class="col-md-1 control-label">Product</label>
+            </div>
+            <div class="row">
+                <form class="col-md-10">
+                    <input type="text" name="txtSearch" ng-model="txtSearch" class="form-control" placeholder="search product" />
+                </form>
+                <a data-toggle="modal" href="#myModalAdd" class="btn btn-primary col-md-2"><span class="glyphicon glyphicon-cloud"></span>Add New</a>
+            </div>
+            <div class="row" >
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="t in SP| filter:txtSearch">
+                        <tr >
+                            <td>{{t.id}}</td>
+                            <td>{{t.name}}</td>
+                            <td>{{t.description}}</td>
+                            <td>{{t.price}}</td>
+                            <td><a href="#myModalEdit" class="btn btn-info" id="btnEdit" data-toggle="modal" data-target="#myModalEdit"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+                                <a href="#" ng-click="del(t.id)" class="btn btn-info"><span class="glyphicon glyphicon-trash"></span> Delete</a></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>  
+
+
+            <!--star popup add product-->
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModalAdd" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add new product</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <label>Name</label>
+                                        <input ng-model="name" type="text" class="form-control" id="form-name" placeholder="Type name" />
+
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Description</label>
+                                        <input ng-model="description" type="text" class="form-control" id="Text2" placeholder="Type name" />
+
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Price</label>
+                                        <input ng-model="price" type="text" class="form-control" id="Text1" placeholder="Type name" />
+
+                                    </div>
+
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            <button ng-click="themdl(name, description, price)" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-off"></span> Save change</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--end popup-->
+
+            <!--star popup edit product-->
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModalEdit" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Edit product</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form">
+                                <div class="row">
+                                    <div class="input-group-addon">
+                                        <label>Name</label>
+                                        <input ng-model="name" type="text" class="form-control" id="form-name" placeholder="Type name" />
+
+                                    </div>
+                                    <div class="input-group-addon">
+                                        <label>Price</label>
+                                        <input ng-model="price" type="text" class="form-control" id="Text1" placeholder="Type name" />
+
+                                    </div>
+                                    <div class="input-group-addon">
+                                        <label>Description</label>
+                                        <input ng-model="description" type="text" class="form-control" id="Text2" placeholder="Type name" />
+
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-off"></span> Save change</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <!--end popup-->
+        </div>
+    </body>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('CR', function ($scope, $http) {
+        LoadDL();
+                function LoadDL() {
+                $http.get("XuLy/LoadDL.php").then(function (response) {
+                $scope.SP = response.data;
+                });
+                };
+                $scope.del = function (idxoa) {
+                $http.post("XuLy/DeleteDL.php?id=" + idxoa).then(function (response) {
+                LoadDL();
+                });
+                };
+                $scope.themdl = function (name, des, price){
+                $http.post("XuLy/InsertDL.php?tname=" + name + "&tdes=" + des + "&tprice=" + price).then(function (response) {
+                LoadDL();
+                }) ;
+            };
+                });
+    </script>
+</html>
